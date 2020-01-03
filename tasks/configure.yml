@@ -1,0 +1,20 @@
+---
+
+- name: determine which config template to use
+  block:
+  - name: use template from the calling playbook
+    set_fact:
+      config_template: "{{ cloudwatch_agent_config_template }}"
+    when: cloudwatch_agent_config_template != ""
+  - name: "default template - {{ cloudwatch_agent_detail_level }}"
+    set_fact:
+      config_template: "{{ cloudwatch_agent_detail_level }}.json.j2"
+    when: cloudwatch_agent_config_template == ""
+  # end config template block
+
+- name: template the cloudwatch configuration
+  template:
+    src: "{{ config_template }}"
+    dest: "/opt/aws/amazon-cloudwatch-agent/bin/config.json"
+    mode: "u=rwx,g=rx,o=rx"
+  notify: start cloudwatch agent

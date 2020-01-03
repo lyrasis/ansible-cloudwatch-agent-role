@@ -1,0 +1,7 @@
+---
+  
+# NOTE: embedding these here, because public key details should not change often
+# and probably shouldn't be easy to override
+public_key: "amazon-cloudwatch-agent.gpg"
+public_key_url: "https://s3.amazonaws.com/amazoncloudwatch-agent/assets/{{ public_key }}"
+public_key_fingerprint: "9376 16F3 450B 7D80 6CBD  9725 D581 6730 3B78 9C72"

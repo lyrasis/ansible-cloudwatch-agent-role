@@ -1,0 +1,20 @@
+galaxy_info:
+  author: Drew Heles
+  description: Installs and configures the AWS CloudWatch Agent on a server
+  company: LYRASIS
+
+  license: CC0
+
+  min_ansible_version: 2.7
+
+  platforms:
+  - name: Ubuntu
+    versions:
+    - all
+
+  galaxy_tags:
+  - aws
+  - cloudwatch
+  - monitoring
+
+dependencies: []

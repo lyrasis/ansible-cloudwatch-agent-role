@@ -1,0 +1,29 @@
+---
+
+# NOTE: it is expected that values for the vars `file and `sig` will be passed in to this task
+
+- name: download gpg key for the file to be verified
+  get_url:
+    url: "{{ public_key_url }}"
+    dest: "~/{{ public_key }}"
+
+- name: get the fingerprint of the gpg key
+  command: "gpg --with-fingerprint ~/{{ public_key }}"
+  register: fingerprint_result
+  changed_when: false
+
+- name: fail if the the fingerprint can't be verified
+  fail:
+    msg: "the gpg key does not match the fingerprint"
+  when: "'{{ public_key_fingerprint }}' not in fingerprint_result.stdout"
+
+# NOTE: command returns result on stderr. not sure why
+- name: import the gpg key
+  command: "gpg --import ~/{{ public_key }}"
+  register: import_result
+  changed_when: "'imported' in import_result.stderr"
+
+- name: verify the file
+  command: "gpg --verify {{ sig }} {{ file }}"
+  register: verify_result
+  changed_when: false

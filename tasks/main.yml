@@ -1,0 +1,14 @@
+---
+
+- name: make sure to become true
+  import_tasks: ensure_become.yml
+
+- import_tasks: install.yml
+  tags:
+    - cloudwatch-agent
+    - cloudwatch-agent-install
+
+- import_tasks: configure.yml
+  tags:
+    - cloudwatch-agent
+    - cloudwatch-agent-configure

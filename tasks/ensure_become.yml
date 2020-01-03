@@ -1,0 +1,18 @@
+---
+
+# NOTE: this is necessary for the ansible_env vars
+# to be available for checking below
+- name: get the facts
+  setup:
+    filter: "*"
+  register: facts
+
+- name: give me the facts
+  debug:
+    msg: "{{ facts }}"
+    verbosity: 2
+
+- name: fail if not becoming
+  fail:
+    msg: "this role must be run with become: true"
+  when: ansible_env.SUDO_COMMAND is not defined

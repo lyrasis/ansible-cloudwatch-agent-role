@@ -1,0 +1,21 @@
+---
+
+- hosts: all
+  become: true
+
+  vars:
+    cloudwatch_agent_logs:
+    - file_path: "/var/log/fail2ban.log"
+      group_name: "fail2ban.log"
+      stream_name: "{hostname}"
+    - file_path: "/var/log/fsck/checkfs"
+      group_name: "checkfs"
+      stream_name: "{hostname}"
+    cloudwatch_agent_detail_level: "basic" # basic | standard | advanced
+    # cloudwatch_agent_config_template: "cloudwatch_example.json"
+
+  tasks:
+  - name: set up cloudwatch agent monitoring
+    include_role:
+      name: cloudwatch-agent
+      # tasks_from: configure

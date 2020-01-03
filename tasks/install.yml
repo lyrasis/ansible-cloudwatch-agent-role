@@ -1,0 +1,62 @@
+---
+
+- name: install prereqs
+  package:
+    name: "{{ item }}"
+  with_items:
+  - "collectd"
+
+- name: determine agent d/l url
+  block:
+  - name: get architecture
+    shell: "uname -m"
+    register: arch_result
+    changed_when: false
+  - set_fact:
+      arch: arch_result.stdout
+  - name: translate amd architecture
+    set_fact:
+      arch: amd64
+    when: arch_result.stdout == 'x86_64'
+
+  - debug:
+      var: arch
+
+  - name: determine package type
+    set_fact:
+      package_type: deb
+    when: ansible_os_family == 'Debian'
+  - set_fact:
+      package_type: rpm
+    when: ansible_os_family == 'Redhat'
+
+  - name: construct d/l url
+    set_fact:
+      cloudwatch_agent_url: "https://s3.amazonaws.com/amazoncloudwatch-agent/{{ ansible_distribution | lower }}/{{ arch }}/latest/amazon-cloudwatch-agent.{{ package_type }}"
+  when: cloudwatch_agent_url == ""
+
+- name: download agent
+  get_url:
+    url: "{{ cloudwatch_agent_url }}"
+    dest: "~/amazon-cloudwatch-agent.{{ package_type }}"
+
+- name: download agent signature
+  get_url:
+    url: "{{ cloudwatch_agent_url }}.sig"
+    dest: "~/amazon-cloudwatch-agent.{{ package_type }}.sig"
+
+- name: verify agent package
+  include_tasks: verify.yml
+  vars:
+    file: "~/amazon-cloudwatch-agent.{{ package_type }}"
+    sig:  "~/amazon-cloudwatch-agent.{{ package_type }}.sig"
+
+- name: install agent - Debian
+  apt:
+    deb: "~/amazon-cloudwatch-agent.{{ package_type }}"
+  when: ansible_os_family == 'Debian'
+
+- name: install agent - RedHat
+  yum:
+    name: "~/amazon-cloudwatch-agent.{{ package_type }}"
+  when: ansible_os_family == 'Redhat'
