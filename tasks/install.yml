@@ -1,11 +1,5 @@
 ---
 
-- name: install prereqs
-  package:
-    name: "{{ item }}"
-  with_items:
-  - "collectd"
-
 - name: determine agent d/l url
   block:
   - name: get architecture
@@ -18,9 +12,6 @@
     set_fact:
       arch: amd64
     when: arch_result.stdout == 'x86_64'
-
-  - debug:
-      var: arch
 
   - name: determine package type
     set_fact:
@@ -60,3 +51,8 @@
   yum:
     name: "~/amazon-cloudwatch-agent.{{ package_type }}"
   when: ansible_os_family == 'Redhat'
+
+- name: enable service
+  service:
+    name: amazon-cloudwatch-agent
+    enabled: yes
