@@ -1,7 +1,7 @@
 {
 	"agent": {
 		"metrics_collection_interval": 60,
-		"run_as_user": "root"
+		"run_as_user": "{{ cloudwatch_agent_run_as_user }}"
 	},
 {% if cloudwatch_agent_logs | length > 0 %}
 	"logs": {
@@ -28,9 +28,6 @@
 			"InstanceType": "${aws:InstanceType}"
 		},
 		"metrics_collected": {
-			"collectd": {
-				"metrics_aggregation_interval": 60
-			},
 			"cpu": {
 				"measurement": [
 					"cpu_usage_idle",
@@ -49,6 +46,12 @@
 					"used_percent",
 					"inodes_free"
 				],
+        "ignore_file_system_types": [
+            "tmpfs",
+            "devtmpfs",
+            "overlay"
+        ],
+        "drop_device": true,
 				"metrics_collection_interval": 60,
 				"resources": [
 					"*"
@@ -68,11 +71,6 @@
 					"mem_used_percent"
 				],
 				"metrics_collection_interval": 60
-			},
-			"statsd": {
-				"metrics_aggregation_interval": 60,
-				"metrics_collection_interval": 10,
-				"service_address": ":8125"
 			},
 			"swap": {
 				"measurement": [

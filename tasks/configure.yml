@@ -15,6 +15,6 @@
 - name: template the cloudwatch configuration
   template:
     src: "{{ config_template }}"
-    dest: "/opt/aws/amazon-cloudwatch-agent/bin/config.json"
-    mode: "u=rwx,g=rx,o=rx"
-  notify: start cloudwatch agent
+    dest: "/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json"
+    mode: "u=rw,g=r,o=r"
+  notify: restart cloudwatch agent
