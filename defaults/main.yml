@@ -7,9 +7,15 @@ cloudwatch_agent_url: ""
 cloudwatch_agent_config_template: ""
 
 # basic | standard | advanced
+# only used if a custom config template is not provided as above
 cloudwatch_agent_detail_level: "basic"
 
 cloudwatch_agent_logs: []
 # - file_path: "/var/log/fail2ban.log"
 #   group_name: "fail2ban.log"
 #   stream_name: "{hostname}"
+
+# the cloudwatch agent installer creates a "cwagent" user under which we run 
+# the agent by default. "root" or a user you have created and permissioned
+# elsewhere would also be an option.
+cloudwatch_agent_run_as_user: "cwagent"
