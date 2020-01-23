@@ -1,0 +1,20 @@
+---
+
+# Cleans up artifacts left by previous aws moniotoring apparatus
+
+- name: remove old cloudwatch monitoring cron job
+  cron:
+    name: "aws cloudwatch monitoring"
+    state: absent
+
+- name: remove old cloudwatch monitoring scripts
+  file:
+    path: "/opt/aws-scripts-mon"
+    state: absent
+
+- name: remove unneeded dependencies
+  apt:
+    pkg:
+      - libwww-perl
+      - libdatetime-perl
+    state: absent
