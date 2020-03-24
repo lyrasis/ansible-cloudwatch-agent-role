@@ -6,6 +6,7 @@
     shell: "uname -m"
     register: arch_result
     changed_when: false
+    check_mode: no
   - set_fact:
       arch: arch_result.stdout
   - name: translate amd architecture
