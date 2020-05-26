@@ -47,11 +47,13 @@
   apt:
     deb: "~/amazon-cloudwatch-agent.{{ package_type }}"
   when: ansible_os_family == 'Debian'
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: install agent - RedHat
   yum:
     name: "~/amazon-cloudwatch-agent.{{ package_type }}"
   when: ansible_os_family == 'Redhat'
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: enable service
   service:
