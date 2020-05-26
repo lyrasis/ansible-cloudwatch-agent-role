@@ -7,15 +7,42 @@
     url: "{{ public_key_url }}"
     dest: "~/{{ public_key }}"
 
-- name: get the fingerprint of the gpg key
-  command: "gpg --with-fingerprint ~/{{ public_key }}"
-  register: fingerprint_result
-  changed_when: false
+- name: init gpg
+  file:
+    path: "~/.gnupg"
+    mode: "0600"
+    state: directory
+
+# NOTE: ubuntu xenial uses an older version of gpg that outputs fingerprints differently
+- name: get the fingerprint of the gpg key - xenial
+  block:
+  - name: get the fingerprint of the gpg key
+    command: "gpg --with-fingerprint ~/{{ public_key }}"
+    register: fingerprint_result
+    changed_when: false
+
+  - name: use the public key fingerprint as-is
+    set_fact:
+      fingerprint: "{{ public_key_fingerprint }}"
+  when: ansible_distribution_release == 'xenial'
+
+- name: get the fingerprint of the gpg key - not xenial
+  block:
+  - name: get the fingerprint of the gpg key
+    command: "gpg -n --import --import-options import-show ~/{{ public_key }}"
+    register: fingerprint_result
+    changed_when: false
+
+  - name: remove spaces from the public key fingerprint
+    set_fact:
+      fingerprint: "{{ public_key_fingerprint | replace(' ', '') }}"
+
+  when: ansible_distribution_release != 'xenial'
 
 - name: fail if the the fingerprint can't be verified
   fail:
     msg: "the gpg key does not match the fingerprint"
-  when: fingerprint_result.stdout is defined and public_key_fingerprint not in fingerprint_result.stdout
+  when: fingerprint_result.stdout is defined and fingerprint not in fingerprint_result.stdout
 
 # NOTE: command returns result on stderr. not sure why
 - name: import the gpg key
