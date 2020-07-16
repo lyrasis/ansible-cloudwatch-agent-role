@@ -1,0 +1,7 @@
+---
+
+- name: restart cloudwatch agent
+  debug:
+    msg: "trigger cloudwatch agent restart"
+  notify: restart cloudwatch agent
+  changed_when: true
