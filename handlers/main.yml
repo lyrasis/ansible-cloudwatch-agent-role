@@ -1,4 +1,8 @@
 ---
+- name: reload cloudwatch config
+  command: "/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -s -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json"
+  listen: restart cloudwatch agent
+  
 - name: restart cloudwatch agent
   service:
     name: amazon-cloudwatch-agent
