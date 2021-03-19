@@ -18,3 +18,12 @@
     dest: "/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json"
     mode: "u=rw,g=r,o=r"
   notify: restart cloudwatch agent
+
+- name: force handlers to run before retemplating the config
+  meta: flush_handlers
+
+- name: retemplate the cloudwatch configuration
+  template:
+    src: "{{ config_template }}"
+    dest: "/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json"
+    mode: "u=rw,g=r,o=r"
